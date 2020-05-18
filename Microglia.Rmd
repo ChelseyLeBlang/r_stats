@@ -14,3 +14,66 @@ library(foreign)
 library(here)
 microglia_data <- read.spss(here("data","Corrected Comparisons.sav"), to.data.frame = TRUE)
 ```
+```{r}
+levels(microglia_data$Genotype)
+```
+```{r}
+library(tidyverse)
+group_by (microglia_data, Genotype)
+```
+```{r}
+set.seed(1234)
+dplyr::sample_n(microglia_data, 10)
+```
+```{r}
+library(janitor)
+microglia_data_clean <- microglia_data %>%
+  janitor::clean_names()
+```
+```{r}
+all_ha <- microglia_data_clean %>%
+  group_by(genotype)%>%
+  summarize(mean=mean(all_ha,na.rm = TRUE),
+            sd= sd(all_ha,na.rm=TRUE))
+```
+```{r}
+library(ggpubr)
+
+```
+```{r}
+#box plots
+#group by genotype and color by genotype
+
+ggboxplot(microglia_data_clean, x="genotype", y="all_ha", color="genotype", order=c("TIA1 +/+","TIA1 +/-","TIA1 -/-", "P301S TIA1 +/+", "P301S TIA1 +/-","P301S TIA1 -/-" ), ylab="microglial density (#/mmsq)", xlab = "genotype")
+```
+```{r}
+#means plot
+# Plot density by genotype
+# Add error bars: mean_se
+# (other values include: mean_sd, mean_ci, median_iqr, ....)
+
+library(ggpubr)
+ggline(microglia_data_clean, x = "genotype", y = "all_ha", 
+       add = c("mean_se", "jitter"), 
+       order = c("TIA1 +/+","TIA1 +/-","TIA1 -/-", "P301S TIA1 +/+", "P301S TIA1 +/-","P301S TIA1 -/-" ),
+       ylab = "Density", xlab = "genotype")
+```
+```{r}
+all_ha.anova <- aov(all_ha~genotype,data=microglia_data_clean)
+```
+```{r}
+summary(all_ha.anova)
+```
+
+```{r}
+pairwise.t.test(microglia_data_clean$all_ha, microglia_data_clean$genotype, p.adjust="bonferroni", pool.sd = T)
+```
+
+```{r}
+all_ha_bonferroni <- pairwise.t.test(microglia_data_clean$all_ha, microglia_data_clean$genotype, p.adjust="bonferroni", pool.sd = T)
+```
+```{r}
+library(kableExtra)
+kable(all_ha_bonferroni$p.value)
+```
+

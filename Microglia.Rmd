@@ -76,4 +76,21 @@ all_ha_bonferroni <- pairwise.t.test(microglia_data_clean$all_ha, microglia_data
 library(kableExtra)
 kable(all_ha_bonferroni$p.value)
 ```
+```{r}
+#dodgelabels
+all_ha_labels <- ggboxplot(microglia_data_clean, x="genotype", y="all_ha", color="genotype", order=c("TIA1 +/+","TIA1 +/-","TIA1 -/-", "P301S TIA1 +/+", "P301S TIA1 +/-","P301S TIA1 -/-" ), ylab="microglial density (#/mmsq)", xlab = "genotype")
+```
+```{r}
+#clean up with theme
+all_ha_dodged<-
+all_ha_labels+ scale_x_discrete(guide = guide_axis(n.dodge=3))+theme_bw()
+```
+```{r}
+library(paletteer)
+view(palettes_d_names)
+```
+```{r}
+#color with cool palette
+all_ha_dodged + scale_color_paletteer_d("DresdenColor::deathmasks")
+```
 
